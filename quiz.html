@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz</title>
+<style>
+  .btn {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="question-container">
+  <div id="question">Question text</div>
+  <div id="answer-buttons"></div>
+  <button id="next-btn" class="btn">Next</button>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "Which is the largest animal in the world?",
+    answers: [
+      {text: "Shark", correct: false},
+      {text: "Blue whale", correct: true},
+      {text: "Elephant", correct: false},
+      {text: "Giraffe", correct: false},
+    ]
+  },
+  {
+    question: "Which is the greatest batsman in the world?",
+    answers: [
+      {text: "Virat Kohli", correct: false},
+      {text: "Sachin Tendulkar", correct: true},
+      {text: "Ricky Ponting", correct: false},
+      {text: "MS Dhoni", correct: false},
+    ]
+  },
+  {
+    question: "Who made 100 centuries in world cricket?",
+    answers: [
+      {text: "Sachin Tendulkar", correct: true},
+      {text: "Yuvraj Singh", correct: false},
+      {text: "Virat Kohli", correct: false},
+      {text: "MS Dhoni", correct: false},
+    ]
+  },
+  {
+    question: "Which country won the World Cup in 2023?",
+    answers: [
+      {text: "India", correct: false},
+      {text: "England", correct: false},
+      {text: "New Zealand", correct: false},
+      {text: "Australia", correct: true},
+    ]
+  },
+  {
+    question: "Which country won the World Cup in 2024?",
+    answers: [
+      {text: "England", correct: false},
+      {text: "New Zealand", correct: false},
+      {text: "Pakistan", correct: false},
+      {text: "India", correct: true},
+    ]
+  },
+  {
+    question: "Which country has the largest population in the world?",
+    answers: [
+      {text: "India", correct: true},
+      {text: "China", correct: false},
+      {text: "America", correct: false},
+      {text: "Russia", correct: false},
+    ]
+  }
+];
+
+const questionElement = document.getElementById("question");
+const answerButtonsElement = document.getElementById("answer-buttons");
+const nextButton = document.getElementById("next-btn");
+
+let currentQuestionIndex = 0;
+let score = 0;
+
+function startQuiz() {
+  currentQuestionIndex = 0;
+  score = 0;
+  nextButton.innerHTML = "Next";
+  showQuestion();
+}
+
+function showQuestion() {
+  resetState();
+  let currentQuestion = questions[currentQuestionIndex];
+  let questionNo = currentQuestionIndex + 1;
+  questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
+
+  currentQuestion.answers.forEach(answer => {
+    const button = document.createElement("button");
+    button.innerHTML = answer.text;
+    button.classList.add("btn");
+    if (answer.correct) {
+      button.dataset.correct = answer.correct;
+    }
+    button.addEventListener("click", selectAnswer);
+    answerButtonsElement.appendChild(button);
+  });
+}
+
+function resetState() {
+  while (answerButtonsElement.firstChild) {
+    answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+  }
+}
+
+function selectAnswer(e) {
+  const selectedButton = e.target;
+  const isCorrect = selectedButton.dataset.correct === "true";
+  if (isCorrect) {
+    score++;
+  }
+  Array.from(answerButtonsElement.children).forEach(button => {
+    setStatusClass(button, button.dataset.correct);
+  });
+  if (questions.length > currentQuestionIndex + 1) {
+    nextButton.style.display = "block";
+  } else {
+    nextButton.innerHTML = `Restart Quiz (Score: ${score})`;
+    nextButton.style.display = "block";
+  }
+}
+
+function setStatusClass(element, correct) {
+  clearStatusClass(element);
+  if (correct) {
+    element.style.backgroundColor = 'green';
+  } else {
+    element.style.backgroundColor = 'red';
+  }
+}
+
+function clearStatusClass(element) {
+  element.style.backgroundColor = '';
+}
+
+nextButton.addEventListener("click", () => {
+  if (questions.length > currentQuestionIndex + 1) {
+    currentQuestionIndex++;
+    showQuestion();
+  } else {
+    startQuiz();
+  }
+});
+
+startQuiz();
+</script>
+
+</body>
+</html>
